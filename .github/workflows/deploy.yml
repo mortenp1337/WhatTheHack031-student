@@ -1,0 +1,22 @@
+# On workflow dispatch deploy the main.bicep file at the subscription scope, all credentials are stored in the GitHub secrets in AZURE_CREDENTIALS
+
+name: Deploy to Azure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy to Azure
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.22.0
+          inlineScript: |
+            az deployment sub create --location westeurope --template-file Bicep-Templates/main.bicep
