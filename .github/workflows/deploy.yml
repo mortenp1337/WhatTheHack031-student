@@ -4,6 +4,16 @@ name: Deploy to Azure
 
 on:
   workflow_dispatch:
+  # add an input option with dev, test, prod as options
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        # add a dropdown with dev, test, prod as options
+        options: ['dev', 'test', 'prod']
+  
+
 
 jobs:
   deploy:
