@@ -3,6 +3,13 @@
 
 name: .NET
 
+# add the evironment variables for container registry: registryName, repositoryName, dockerFolderPath, Application/src/RazorPagesTestSample, and finally a tag that is the github.run_number
+env:
+  registryName: 'th4kidevopsreg.azurecr.io'
+  repositoryName: 'wth/dotnetcoreapp'
+  dockerFolderPath: 'Application/src/RazorPagesTestSample'
+  tag: ${{ github.run_number }}
+
 on:
   push:
     branches: [ "main" ]
@@ -11,7 +18,8 @@ on:
       - 'Application/**'
   pull_request:
     branches: [ "main" ]
-
+    
+  workflow_dispatch:
 
 jobs:
   build:
@@ -33,3 +41,18 @@ jobs:
       run: dotnet build --no-restore src/RazorPagesTestSample
     - name: Test
       run: dotnet test --no-build --verbosity normal tests/RazorPagesTestSample.Tests
+
+    build and push the container to the container registry:
+    # checkout repo
+    - uses: actions/checkout@v2
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ${{ env.dockerFolderPath }}
+        push: true
+        tags: ${{ env.registryName }}/${{ env.repositoryName }}:${{ env.tag }}
+        # add the registry login credentials
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
