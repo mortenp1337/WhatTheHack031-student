@@ -17,6 +17,5 @@ jobs:
       - name: Deploy to Azure
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.22.0
-          inlineScript: |
+          run: |
             az deployment sub create --location westeurope --template-file Bicep-Templates/main.bicep
