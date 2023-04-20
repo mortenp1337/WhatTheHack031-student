@@ -42,8 +42,12 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal tests/RazorPagesTestSample.Tests
 
-    build and push the container to the container registry:
+  build-and-push-container:
     # checkout repo
+    runs-on: ubuntu-latest
+    # depends on build job
+    needs: build
+    steps:
     - uses: actions/checkout@v2
     
     - name: Build and push Docker image
