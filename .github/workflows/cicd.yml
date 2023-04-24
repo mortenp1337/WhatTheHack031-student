@@ -1,7 +1,7 @@
 name: .NET + Docker CI + Image Pull
 
 env:
-  registryName: dynodevopsreg.azurecr.io
+  registryName: th4kidevopsreg.azurecr.io
   repositoryName: wth/dotnetcoreapp
   dockerfilePath: ./Application/src/RazorPagesTestSample
   tag: ${{github.run_number}}
