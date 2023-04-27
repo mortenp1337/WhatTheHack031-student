@@ -95,17 +95,17 @@ jobs:
       url: https://th5kidevops-test.azurewebsites.net
     
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: actions/checkout@v2
+      
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'th5kidevops-test'
-        images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'th5kidevops-test'
+          images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
 
   deploy-to-prod:
   
@@ -116,14 +116,14 @@ jobs:
       url: https://th5kidevops-prod.azurewebsites.net
     
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: actions/checkout@v2
+      
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'th5kidevops-prod'
-        images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'th5kidevops-prod'
+          images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
