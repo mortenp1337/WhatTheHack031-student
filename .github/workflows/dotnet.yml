@@ -5,7 +5,7 @@ name: .NET
 
 # add the evironment variables for container registry: registryName, repositoryName, dockerFolderPath, Application/src/RazorPagesTestSample, and finally a tag that is the github.run_number
 env:
-  registryName: 'th4kidevopsreg.azurecr.io'
+  registryName: 'th5kidevopsreg.azurecr.io'
   repositoryName: 'wth/dotnetcoreapp'
   dockerFolderPath: 'Application/src/RazorPagesTestSample'
   tag: ${{ github.run_number }}
@@ -75,7 +75,7 @@ jobs:
     needs: dockerBuildPush
     environment:
       name: dev
-      url: https://th4kidevops-dev.azurewebsites.net/
+      url: https://th5kidevops-dev.azurewebsites.net/
     
     steps:
       - name: 'Login via Azure CLI'
@@ -85,7 +85,7 @@ jobs:
 
       - uses: azure/webapps-deploy@v2
         with:
-          app-name: 'th4kidevops-dev'
+          app-name: 'th5kidevops-dev'
           images: ${{secrets.ACR_NAME}}/wth/dotnetcoreapp:${{github.run_number}}
 
   deploy-to-test:
@@ -93,8 +93,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-to-dev
     environment:
-      name: th4kidevops
-      url: https://th4kidevops-test.azurewebsites.net/
+      name: th5kidevops
+      url: https://th5kidevops-test.azurewebsites.net/
     
     steps:
     - uses: actions/checkout@v2
@@ -106,7 +106,7 @@ jobs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'th4kidevops-test'
+        app-name: 'th5kidevops-test'
         images: ${{secrets.ACR_NAME}}/wth/dotnetcoreapp:${{github.run_number}}
 
   deploy-to-prod:
@@ -115,7 +115,7 @@ jobs:
     needs: deploy-to-test
     environment:
       name: prod
-      url: https://th4kidevops-prod.azurewebsites.net/
+      url: https://th5kidevops-prod.azurewebsites.net/
     
     steps:
     - uses: actions/checkout@v2
@@ -127,5 +127,5 @@ jobs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'th4kidevops-prod'
+        app-name: 'th5kidevops-prod'
         images: ${{secrets.ACR_NAME}}/wth/dotnetcoreapp:${{github.run_number}}

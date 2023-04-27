@@ -1,7 +1,7 @@
 name: .NET + Docker CI + Image Pull
 
 env:
-  registryName: th4kidevopsreg.azurecr.io
+  registryName: th5kidevopsreg.azurecr.io
   repositoryName: wth/dotnetcoreapp
   dockerfilePath: ./Application/src/RazorPagesTestSample
   tag: ${{github.run_number}}
@@ -73,7 +73,7 @@ jobs:
     needs: docker-build-and-push
     environment:
       name: dev
-      url: https://th4kidevops-dev.azurewebsites.net
+      url: https://th5kidevops-dev.azurewebsites.net
     
     steps:
       - name: 'Login via Azure CLI'
@@ -83,7 +83,7 @@ jobs:
 
       - uses: azure/webapps-deploy@v2
         with:
-          app-name: 'th4kidevops-dev'
+          app-name: 'th5kidevops-dev'
           images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
 
   deploy-to-test:
@@ -92,7 +92,7 @@ jobs:
     needs: deploy-to-dev
     environment:
       name: test
-      url: https://th4kidevops-test.azurewebsites.net
+      url: https://th5kidevops-test.azurewebsites.net
     
     steps:
     - uses: actions/checkout@v2
@@ -104,7 +104,7 @@ jobs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'th4kidevops-test'
+        app-name: 'th5kidevops-test'
         images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
 
   deploy-to-prod:
@@ -113,7 +113,7 @@ jobs:
     needs: deploy-to-test
     environment:
       name: prod
-      url: https://th4kidevops-prod.azurewebsites.net
+      url: https://th5kidevops-prod.azurewebsites.net
     
     steps:
     - uses: actions/checkout@v2
@@ -125,5 +125,5 @@ jobs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: 'th4kidevops-prod'
+        app-name: 'th5kidevops-prod'
         images: ${{env.registryName}}/wth/dotnetcoreapp:${{env.tag}}
