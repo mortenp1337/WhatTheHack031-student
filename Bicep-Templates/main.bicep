@@ -1,6 +1,6 @@
 targetScope = 'subscription'
 
-param location string = 'westeurope'
+param location string = 'northeurope'
 param prefix string = 'th5ki'
 
 param webAppName string = '${prefix}devops-dev'
@@ -31,5 +31,6 @@ module azresources 'container-webapp-template.bicep' = {
    imageName: imageName
    registrySku: registrySku
    startupCommand: startupCommand
+   prefix: prefix
   }
 }

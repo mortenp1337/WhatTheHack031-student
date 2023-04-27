@@ -1,25 +1,27 @@
-param location string = 'westeurope'
-param prefix string = 'duck'
+param location string = 'northeurope'
+param prefix string = 'th5ki'
 
 param webAppName string = '${prefix}devops-dev'
 param hostingPlanName string = '${prefix}devops-asp'
 param appInsightsName string = '${prefix}devops-ai'
 param sku string = 'S1'
+param workspaceName string = '${prefix}devops-la'
 param registryName string = '${prefix}devopsreg'
 param imageName string = '${prefix}devopsimage'
 param registrySku string = 'Standard'
 param startupCommand string = ''
 
-
-resource webApp 'Microsoft.Web/sites@2022-09-01' = {
+resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: webAppName
   location: location
   tags: {
     'hidden-related:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${hostingPlanName}': 'empty'
+    'hidden-link:/app-insights-resource-id': appInsights.id
   }
   properties: {
-    name: webAppName
+
     siteConfig: {
+
       appSettings: [
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
@@ -39,19 +41,28 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference(appInsights.id, '2015-05-01').InstrumentationKey
+          value: appInsights.properties.InstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          value: '~3'
+        }
+        {
+          name: 'DiagnosticServices_EXTENSION_VERSION'
+          value: '~3'
         }
       ]
+
       appCommandLine: startupCommand
       linuxFxVersion: 'DOCKER|${registry.properties.loginServer}/${imageName}'
-    }
-    serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
-    hostingEnvironment: ''
-  }
-  dependsOn: [
-    hostingPlan
 
-  ]
+    }
+    serverFarmId: hostingPlan.id
+  }
 }
 
 resource registry 'Microsoft.ContainerRegistry/registries@2022-12-01' = {
@@ -61,35 +72,46 @@ resource registry 'Microsoft.ContainerRegistry/registries@2022-12-01' = {
   name: registryName
   location: location
   properties: {
-    adminUserEnabled: 'true'
+    adminUserEnabled: true
   }
 }
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+resource hostingPlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   sku: {
     tier: first(skip(split(sku, ' '), 1))
     name: first(split(sku, ' '))
   }
   kind: 'linux'
   name: hostingPlanName
+
   location: location
   properties: {
-    name: hostingPlanName
-    workerSizeId: '0'
     reserved: true
-    numberOfWorkers: '1'
-    hostingEnvironment: ''
   }
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: appInsightsName
+  kind: 'web'
   location: location
-  tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webAppName}': 'Resource'
-  }
   properties: {
-    applicationId: webAppName
-    Request_Source: 'AzureTfsExtensionAzureProject'
+    Application_Type: 'web'
+    WorkspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
+  name: workspaceName
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 120
+    features: {
+      searchVersion: 1
+      legacy: 0
+      enableLogAccessUsingOnlyResourcePermissions: true
+    }
   }
 }
