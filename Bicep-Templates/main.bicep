@@ -2,8 +2,9 @@ targetScope = 'subscription'
 
 param location string = 'northeurope'
 param prefix string = 'th5ki'
+param environment string = 'dev'
 
-param webAppName string = '${prefix}devops-dev'
+param webAppName string = '${prefix}devops-${environment}'
 param hostingPlanName string = '${prefix}devops-asp'
 param appInsightsName string = '${prefix}devops-ai'
 param sku string = 'S1'
